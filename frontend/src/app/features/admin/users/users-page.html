@@ -1,0 +1,197 @@
+<div class="users-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-text">
+      <h1 class="page-title">Gestion de Usuarios</h1>
+      <p class="page-subtitle">Administra los usuarios del sistema</p>
+    </div>
+    <button class="btn-new-user" (click)="openCreateModal()">
+      <lucide-icon [img]="icons.plus" [size]="18" color="#FFFFFF" />
+      Nuevo Usuario
+    </button>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <!-- Search -->
+    <div class="filter-field search-field">
+      <label class="filter-label">Buscar</label>
+      <div class="input-with-icon">
+        <lucide-icon class="field-icon" [img]="icons.search" [size]="16" color="#A3A3A3" />
+        <input
+          type="text"
+          [formControl]="searchControl"
+          placeholder="Buscar por nombre o email..."
+          (keyup.enter)="applyFilters()"
+        />
+      </div>
+    </div>
+
+    <!-- Role -->
+    <div class="filter-field">
+      <label class="filter-label">Rol</label>
+      <select [formControl]="roleControl" (change)="applyFilters()">
+        @for (opt of roleOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Branch -->
+    <div class="filter-field">
+      <label class="filter-label">Sucursal</label>
+      <select [formControl]="branchControl" (change)="applyFilters()">
+        <option value="">Todas</option>
+        @for (b of branches(); track b.id) {
+          <option [value]="b.id">{{ b.name }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Status Toggle -->
+    <div class="filter-field">
+      <label class="filter-label">Estado</label>
+      <div class="status-toggle">
+        <button
+          class="toggle-btn"
+          [class.active]="activeFilter()"
+          (click)="setActiveFilter(true)"
+        >
+          Activo
+        </button>
+        <button
+          class="toggle-btn"
+          [class.active]="!activeFilter()"
+          (click)="setActiveFilter(false)"
+        >
+          Inactivo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th class="col-sucursal">Sucursal</th>
+          <th class="col-status">Estado</th>
+          <th class="col-actions">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="6" class="loading-cell">Cargando usuarios...</td>
+          </tr>
+        } @else if (users().length === 0) {
+          <tr>
+            <td colspan="6" class="empty-cell">No se encontraron usuarios</td>
+          </tr>
+        } @else {
+          @for (user of users(); track user.id) {
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar" [style.background]="getAvatarColor(user)">
+                    {{ getInitials(user) }}
+                  </div>
+                  <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+                </div>
+              </td>
+              <td class="email-cell">{{ user.email }}</td>
+              <td>
+                <span
+                  class="role-badge"
+                  [style.background]="roleColors[user.role].bg"
+                  [style.color]="roleColors[user.role].text"
+                >
+                  {{ roleLabels[user.role] }}
+                </span>
+              </td>
+              <td class="sucursal-cell">{{ user.branch?.name || '-' }}</td>
+              <td>
+                @if (user.isActive) {
+                  <span class="status-badge status-active">Activo</span>
+                } @else {
+                  <span class="status-badge status-inactive">Inactivo</span>
+                }
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <button class="action-icon-btn" title="Editar" (click)="openEditModal(user)">
+                    <lucide-icon [img]="icons.pencil" [size]="16" color="#727272" />
+                  </button>
+                  @if (user.isActive) {
+                    <button class="action-icon-btn danger" title="Desactivar" (click)="toggleUserStatus(user)">
+                      <lucide-icon [img]="icons.userX" [size]="16" color="#DC2626" />
+                    </button>
+                  } @else {
+                    <button class="action-icon-btn success" title="Activar" (click)="toggleUserStatus(user)">
+                      <lucide-icon [img]="icons.userCheck" [size]="16" color="#16A34A" />
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    @if (totalPages() > 0 && !isLoading()) {
+      <div class="pagination-bar">
+        <span class="pagination-info">{{ paginationText() }}</span>
+        <div class="pagination-buttons">
+          <button
+            class="page-btn"
+            [disabled]="currentPage() === 1"
+            (click)="goToPage(currentPage() - 1)"
+          >
+            <lucide-icon [img]="icons.chevronLeft" [size]="16" />
+          </button>
+          @for (page of pages(); track page) {
+            <button
+              class="page-btn"
+              [class.active]="page === currentPage()"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          }
+          <button
+            class="page-btn"
+            [disabled]="currentPage() === totalPages()"
+            (click)="goToPage(currentPage() + 1)"
+          >
+            <lucide-icon [img]="icons.chevronRight" [size]="16" />
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Create Modal -->
+@if (showCreateModal()) {
+  <app-user-create-modal
+    [branches]="branches()"
+    (close)="closeCreateModal()"
+    (created)="onUserCreated()"
+  />
+}
+
+<!-- Edit Modal -->
+@if (showEditModal() && editingUser()) {
+  <app-user-edit-modal
+    [user]="editingUser()!"
+    [branches]="branches()"
+    (close)="closeEditModal()"
+    (updated)="onUserUpdated()"
+  />
+}

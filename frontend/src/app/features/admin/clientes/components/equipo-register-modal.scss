@@ -1,0 +1,233 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+// Header
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px 28px 0 28px;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modal-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #171717;
+}
+
+.modal-subtitle {
+  font-family: 'Lexend', sans-serif;
+  font-size: 13px;
+  color: #727272;
+}
+
+.close-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover { background: #F5F5F5; }
+}
+
+.divider {
+  height: 1px;
+  background: #E5E5E5;
+  margin-top: 16px;
+}
+
+// Body
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 28px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.flex-1 { flex: 1; }
+}
+
+.field-row {
+  display: flex;
+  gap: 16px;
+}
+
+.field-label {
+  font-family: 'Lexend', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #171717;
+}
+
+.field-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #E5E5E5;
+  border-radius: 6px;
+  padding: 0 16px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #171717;
+  background: #FFFFFF;
+  outline: none;
+  box-sizing: border-box;
+
+  &::placeholder { color: #A3A3A3; }
+  &:focus { border-color: #E10E1A; }
+}
+
+.field-select {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #E5E5E5;
+  border-radius: 6px;
+  padding: 0 16px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #171717;
+  background: #FFFFFF;
+  outline: none;
+  cursor: pointer;
+
+  &:focus { border-color: #E10E1A; }
+}
+
+.field-textarea {
+  width: 100%;
+  min-height: 80px;
+  border: 1px solid #E5E5E5;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #171717;
+  background: #FFFFFF;
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+
+  &::placeholder { color: #A3A3A3; }
+  &:focus { border-color: #E10E1A; }
+}
+
+.field-note {
+  font-family: 'Lexend', sans-serif;
+  font-size: 11px;
+  font-style: italic;
+  color: #727272;
+}
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 120px;
+  border: 1px solid #E5E5E5;
+  border-radius: 6px;
+  background: #FFFFFF;
+  cursor: pointer;
+
+  &:hover { border-color: #D4D4D4; background: #FAFAFA; }
+}
+
+.upload-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #727272;
+}
+
+.upload-hint {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #A3A3A3;
+}
+
+.error-message {
+  padding: 10px 16px;
+  background: #FEE2E2;
+  color: #DC2626;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+}
+
+// Footer
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 16px 28px 24px 28px;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #E10E1A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover:not(:disabled) { background: #AA1919; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #FFFFFF;
+  color: #E10E1A;
+  border: 1px solid #E10E1A;
+  border-radius: 6px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover { background: #FEF0E8; }
+}

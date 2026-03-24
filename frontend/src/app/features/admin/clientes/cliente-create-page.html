@@ -1,0 +1,137 @@
+<div class="create-page">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="top-left">
+      <button class="back-btn" (click)="goBack()">
+        <lucide-icon [img]="icons.arrowLeft" [size]="20" color="#727272" />
+      </button>
+      <h1 class="top-title">Registrar Nuevo Cliente</h1>
+    </div>
+    <span class="breadcrumb">Clientes / Nuevo</span>
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card">
+    <!-- Section: Informacion General -->
+    <div class="form-section">
+      <div class="section-header">
+        <h2 class="section-title">Informacion General</h2>
+        <p class="section-desc">Datos basicos del cliente</p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Tipo de Cliente</label>
+        <div class="toggle-buttons">
+          <button
+            class="toggle-btn"
+            [class.active]="clientType() === 'persona'"
+            (click)="setType('persona')"
+          >
+            Persona
+          </button>
+          <button
+            class="toggle-btn"
+            [class.active]="clientType() === 'empresa'"
+            (click)="setType('empresa')"
+          >
+            Empresa
+          </button>
+        </div>
+      </div>
+
+      @if (clientType() === 'persona') {
+        <div class="field-group">
+          <label class="field-label">Cedula de Identidad (CI)</label>
+          <input type="text" class="field-input" [formControl]="form.controls.ci" placeholder="Ej: 12345678" />
+        </div>
+        <div class="field-row">
+          <div class="field-group flex-1">
+            <label class="field-label">Nombre</label>
+            <input type="text" class="field-input" [formControl]="form.controls.firstName" placeholder="Nombres del cliente" />
+          </div>
+          <div class="field-group flex-1">
+            <label class="field-label">Apellido</label>
+            <input type="text" class="field-input" [formControl]="form.controls.lastName" placeholder="Apellidos del cliente" />
+          </div>
+        </div>
+      } @else {
+        <div class="field-group">
+          <label class="field-label">NIT</label>
+          <input type="text" class="field-input" [formControl]="form.controls.nit" placeholder="Ej: 1234567890" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Razon Social</label>
+          <input type="text" class="field-input" [formControl]="form.controls.companyName" placeholder="Nombre de la empresa" />
+        </div>
+      }
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section: Datos de Contacto -->
+    <div class="form-section">
+      <div class="section-header">
+        <h2 class="section-title">Datos de Contacto</h2>
+        <p class="section-desc">Informacion para comunicacion con el cliente</p>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group flex-1">
+          <label class="field-label">Telefono</label>
+          <input type="text" class="field-input" [formControl]="form.controls.phone" placeholder="+591 7XXXXXXX" />
+        </div>
+        <div class="field-group flex-1">
+          <label class="field-label">Email</label>
+          <input type="email" class="field-input" [formControl]="form.controls.email" placeholder="cliente@ejemplo.com" />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Direccion</label>
+        <input type="text" class="field-input" [formControl]="form.controls.address" placeholder="Calle, Numero, Zona, Ciudad" />
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section: Asignacion -->
+    <div class="form-section">
+      <div class="section-header">
+        <h2 class="section-title">Asignacion</h2>
+        <p class="section-desc">Sucursal donde se registra el cliente</p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Sucursal</label>
+        <select class="field-select" [formControl]="form.controls.branchId">
+          <option value="" disabled>Seleccionar sucursal...</option>
+          @for (b of branches(); track b.id) {
+            <option [value]="b.id">{{ b.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Footer -->
+    <div class="form-footer">
+      <div class="footer-buttons">
+        <button class="btn-secondary" (click)="goBack()">Cancelar</button>
+        <button class="btn-primary" [disabled]="isSubmitting()" (click)="onSubmit()">
+          <lucide-icon [img]="icons.userPlus" [size]="16" color="#FFFFFF" />
+          Registrar Cliente
+        </button>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="error-message">{{ errorMessage() }}</div>
+      }
+
+      <div class="info-note">
+        <lucide-icon [img]="icons.info" [size]="14" color="#727272" />
+        <span>El sistema generara automaticamente un codigo COACOM-XXXXX</span>
+      </div>
+    </div>
+  </div>
+</div>

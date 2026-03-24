@@ -1,0 +1,149 @@
+.sidebar {
+  width: 240px;
+  min-width: 240px;
+  height: 100vh;
+  background: #1A1A2E;
+  display: flex;
+  flex-direction: column;
+}
+
+// ===== LOGO =====
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px 20px 24px;
+  border-bottom: 1px solid #FFFFFF15;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: #E10E1A;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Verdana', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.logo-text {
+  font-family: 'Verdana', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 1px;
+}
+
+// ===== SECTION LABEL =====
+.section-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #FFFFFF50;
+  letter-spacing: 1.5px;
+  padding: 16px 24px 8px 24px;
+}
+
+// ===== NAVIGATION =====
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 12px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-family: 'Lexend', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #FFFFFF80;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #FFFFFF10;
+    color: #FFFFFFCC;
+  }
+
+  &.active {
+    background: #E10E1A;
+    color: #FFFFFF;
+  }
+}
+
+// ===== USER PROFILE =====
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid #FFFFFF15;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  background: #AA1919;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: #FFFFFF60;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: #FFFFFF60;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #FFFFFF10;
+    color: #FFFFFF;
+  }
+}

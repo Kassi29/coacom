@@ -1,0 +1,109 @@
+<div class="login-container">
+  <!-- Left Panel: Brand -->
+  <div class="left-panel">
+    <div class="decorative-square sq-1"></div>
+    <div class="decorative-square sq-2"></div>
+    <div class="decorative-square sq-3"></div>
+    <div class="decorative-line ln-1"></div>
+    <div class="decorative-line ln-2"></div>
+
+    <div class="brand-group">
+      <lucide-icon [img]="icons.settings" [size]="64" color="#FFFFFF" [strokeWidth]="1.5" />
+      <h1 class="brand-name">COACOM</h1>
+      <span class="brand-suffix">S.R.L.</span>
+      <span class="brand-tagline">soluciones profesionales</span>
+    </div>
+  </div>
+
+  <!-- Right Panel: Login Form -->
+  <div class="right-panel">
+    <div class="login-card">
+      <div class="title-section">
+        <h2 class="login-title">Iniciar Sesion</h2>
+        <p class="login-subtitle">Ingrese sus credenciales para acceder al sistema</p>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="error-alert">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="handleLogin()">
+        <div class="fields-group">
+          <!-- Email Field -->
+          <div class="form-field">
+            <label for="email">Correo Electronico</label>
+            <div class="input-wrapper">
+              <lucide-icon class="input-icon" [img]="icons.mail" [size]="18" color="#A3A3A3" />
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                placeholder="correo@coacom.com"
+              />
+            </div>
+            @if (form.controls.email.touched && form.controls.email.errors) {
+              <span class="field-error">Ingrese un correo valido</span>
+            }
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-field">
+            <label for="password">Contrasena</label>
+            <div class="input-wrapper">
+              <lucide-icon class="input-icon" [img]="icons.lock" [size]="18" color="#A3A3A3" />
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Ingrese su contrasena"
+              />
+              <button type="button" class="toggle-password" (click)="togglePassword()">
+                <lucide-icon
+                  [img]="showPassword() ? icons.eyeOff : icons.eye"
+                  [size]="18"
+                  color="#A3A3A3"
+                />
+              </button>
+            </div>
+            @if (form.controls.password.touched && form.controls.password.errors) {
+              <span class="field-error">La contrasena debe tener al menos 6 caracteres</span>
+            }
+          </div>
+        </div>
+
+        <!-- Remember Me -->
+        <div class="remember-row">
+          <label class="checkbox-label" (click)="toggleRememberMe()">
+            <span class="checkbox-box" [class.checked]="rememberMe()">
+              @if (rememberMe()) {
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M2.5 6L5 8.5L9.5 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              }
+            </span>
+            <span class="checkbox-text">Recordarme</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="spinner"></span>
+            Ingresando...
+          } @else {
+            Ingresar
+          }
+        </button>
+
+        <!-- Forgot Password -->
+        <a class="forgot-link" href="javascript:void(0)">Olvide mi contrasena</a>
+      </form>
+    </div>
+
+    <footer class="login-footer">
+      &copy; 2026 COACOM SRL - Todos los derechos reservados
+    </footer>
+  </div>
+</div>

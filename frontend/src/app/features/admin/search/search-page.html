@@ -1,0 +1,145 @@
+<div class="search-page">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <h1 class="top-title">Consulta de Clientes y Equipos</h1>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-card">
+    <div class="search-card-header">
+      <h2 class="search-card-title">Búsqueda Universal</h2>
+      <p class="search-card-subtitle">Busque por NIT, CI, código de cliente, número de serie o nombre</p>
+    </div>
+    <div class="search-row">
+      <div class="search-input-wrap">
+        <lucide-icon [img]="icons.search" [size]="18" color="#A3A3A3" class="search-icon" />
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Ingrese NIT, CI, código COACOM-XXXXX o número de serie..."
+          [formControl]="searchControl"
+          (keydown.enter)="doSearch()"
+        />
+      </div>
+      <select class="filter-select" [formControl]="filterControl">
+        <option value="all">Todas las categorías</option>
+        <option value="clients">Clientes</option>
+        <option value="equipment">Equipos</option>
+      </select>
+      <button class="btn-search" (click)="doSearch()">
+        <lucide-icon [img]="icons.search" [size]="16" color="#FFFFFF" />
+        Buscar
+      </button>
+    </div>
+  </div>
+
+  <!-- Results Info Bar -->
+  @if (hasSearched()) {
+    <div class="results-info">
+      <span class="results-text">
+        Resultados para '<strong>{{ searchQuery() }}</strong>' — {{ totalClients() }} clientes, {{ totalEquipment() }} equipos
+      </span>
+      <span class="results-time">Búsqueda en {{ searchTime() }}ms</span>
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="loading-bar">Buscando...</div>
+  }
+
+  <!-- Results Columns -->
+  @if (hasSearched() && !isLoading()) {
+    <div class="results-columns">
+      <!-- Left Column: Clientes -->
+      <div class="results-col">
+        <div class="col-header">
+          <div class="col-header-left">
+            <lucide-icon [img]="icons.users" [size]="16" color="#727272" />
+            <span class="col-header-title">Clientes Encontrados</span>
+          </div>
+          <span class="col-count-badge">{{ totalClients() }}</span>
+        </div>
+        <div class="col-body">
+          @if (clients().length === 0) {
+            <div class="col-empty">No se encontraron clientes</div>
+          } @else {
+            @for (client of clients(); track client.id) {
+              <div class="result-row" (click)="goToClientProfile(client)">
+                <div class="result-row-left">
+                  <div class="avatar-circle" [style.background]="getAvatarColor(client)">
+                    {{ getInitials(client) }}
+                  </div>
+                  <div class="result-info">
+                    <span class="result-name">{{ client.displayName }}</span>
+                    <div class="result-meta">
+                      <span class="result-code">{{ client.code }}</span>
+                      @if (client.nit) {
+                        <span class="meta-sep">·</span>
+                        <span>NIT: {{ client.nit }}</span>
+                      }
+                      @if (client.ci) {
+                        <span class="meta-sep">·</span>
+                        <span>CI: {{ client.ci }}</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="result-row-right">
+                  @if (client.type === 'company') {
+                    <span class="badge badge-empresa">Empresa</span>
+                  } @else {
+                    <span class="badge badge-persona">Persona</span>
+                  }
+                  <span class="link-action">Ver Perfil
+                    <lucide-icon [img]="icons.arrowRight" [size]="14" color="#E10E1A" />
+                  </span>
+                </div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Right Column: Equipos -->
+      <div class="results-col">
+        <div class="col-header">
+          <div class="col-header-left">
+            <lucide-icon [img]="icons.monitor" [size]="16" color="#727272" />
+            <span class="col-header-title">Equipos Encontrados</span>
+          </div>
+          <span class="col-count-badge">{{ totalEquipment() }}</span>
+        </div>
+        <div class="col-body">
+          @if (equipment().length === 0) {
+            <div class="col-empty">No se encontraron equipos</div>
+          } @else {
+            @for (item of equipment(); track item.id) {
+              <div class="result-row" (click)="goToEquipmentDetail(item)">
+                <div class="result-row-left">
+                  <div class="equipo-icon-wrap">
+                    <lucide-icon [img]="icons.monitor" [size]="20" color="#727272" />
+                  </div>
+                  <div class="result-info">
+                    <span class="result-name">{{ item.serialNumber }}</span>
+                    <div class="result-meta">
+                      <span>{{ item.brand }} {{ item.model }}</span>
+                      <span class="meta-sep">·</span>
+                      <span>{{ item.clientName }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="result-row-right">
+                  <span class="badge badge-tipo">{{ item.equipmentType }}</span>
+                  <span class="link-action">Ver Ficha
+                    <lucide-icon [img]="icons.arrowRight" [size]="14" color="#E10E1A" />
+                  </span>
+                </div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

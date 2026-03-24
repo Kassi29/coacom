@@ -1,0 +1,106 @@
+@if (isLoading()) {
+  <div class="loading">Cargando ficha técnica...</div>
+} @else if (equipment(); as e) {
+  <div class="detail-page">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-left">
+        <button class="back-btn" (click)="goBack()">
+          <lucide-icon [img]="icons.arrowLeft" [size]="20" color="#727272" />
+        </button>
+        <h1 class="top-title">Ficha Técnica de Equipo</h1>
+      </div>
+      <div class="top-right">
+        <button class="btn-outline">
+          <lucide-icon [img]="icons.printer" [size]="14" color="#171717" />
+          Imprimir
+        </button>
+        <button class="btn-primary">
+          <lucide-icon [img]="icons.pencil" [size]="14" color="#FFFFFF" />
+          Editar Equipo
+        </button>
+      </div>
+    </div>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+      @for (bc of breadcrumbs(); track bc.label; let last = $last) {
+        @if (!last) {
+          <span class="crumb link" (click)="navigateTo(bc.link)">{{ bc.label }}</span>
+          <lucide-icon [img]="icons.chevronRight" [size]="14" color="#A3A3A3" />
+        } @else {
+          <span class="crumb active">{{ bc.label }}</span>
+        }
+      }
+    </div>
+
+    <!-- Equipment Info Card -->
+    <div class="equip-card">
+      <div class="equip-left">
+        <div class="equip-icon-wrap">
+          <lucide-icon [img]="icons.monitor" [size]="28" color="#727272" />
+        </div>
+        <div class="equip-details">
+          <h2 class="equip-name">{{ e.marca }} {{ e.modelo }}</h2>
+          <span class="equip-serial">S/N: {{ e.numeroSerie }}</span>
+          <div class="equip-badges">
+            <span class="badge badge-brand">{{ e.marca }}</span>
+            <span class="badge badge-tipo">{{ e.tipoEquipo }}</span>
+            <span class="badge" [class]="'badge-' + statusBadge().cssClass">{{ statusBadge().label }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="equip-right">
+        <div class="equip-info-item">
+          <lucide-icon [img]="icons.users" [size]="16" color="#727272" />
+          <span class="equip-info-label">Propietario:</span>
+          <span class="equip-info-value">{{ e.cliente?.nombreCompleto || '-' }}</span>
+        </div>
+        <div class="equip-info-item">
+          <lucide-icon [img]="icons.calendar" [size]="16" color="#727272" />
+          <span class="equip-info-label">Registrado:</span>
+          <span class="equip-info-value">{{ e.createdAt | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="equip-info-item">
+          <lucide-icon [img]="icons.wrench" [size]="16" color="#727272" />
+          <span class="equip-info-label">Servicios:</span>
+          <span class="equip-info-value">0 registros</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline Section -->
+    <div class="timeline-section">
+      <div class="timeline-header">
+        <h3 class="timeline-title">Historial de Vida del Equipo</h3>
+        <span class="timeline-count">{{ timeline().length }} registros</span>
+      </div>
+      <div class="timeline-body">
+        @if (timeline().length === 0) {
+          <div class="timeline-empty">
+            No hay registros en el historial del equipo.
+          </div>
+        } @else {
+          <div class="timeline-list">
+            @for (entry of timeline(); track entry.date) {
+              <div class="timeline-entry">
+                <div class="timeline-dot-col">
+                  <div class="timeline-dot" [class]="'dot-' + entry.statusColor"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-content">
+                  <span class="timeline-date">{{ entry.date | date:'dd/MM/yyyy HH:mm' }}</span>
+                  <span class="timeline-entry-title">{{ entry.title }}</span>
+                  <p class="timeline-desc">{{ entry.description }}</p>
+                  <span class="timeline-status-badge" [class]="'status-' + entry.statusColor">
+                    {{ entry.status }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

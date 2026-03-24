@@ -1,0 +1,75 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="header-text">
+        <h2 class="modal-title">Registrar Nuevo Equipo</h2>
+        <p class="modal-subtitle">Cliente: {{ clienteLabel() }}</p>
+      </div>
+      <button class="close-btn" (click)="onClose()">
+        <lucide-icon [img]="icons.x" [size]="20" color="#A3A3A3" />
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Form Body -->
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">Número de Serie</label>
+        <input type="text" class="field-input" [formControl]="form.controls.numeroSerie" placeholder="Escribir número de serie" />
+        <span class="field-note">Si el número de serie ya existe, se mostrará el equipo existente</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group flex-1">
+          <label class="field-label">Marca</label>
+          <input type="text" class="field-input" [formControl]="form.controls.marca" placeholder="Ej: Dell, HP, Lenovo..." />
+        </div>
+        <div class="field-group flex-1">
+          <label class="field-label">Modelo</label>
+          <input type="text" class="field-input" [formControl]="form.controls.modelo" placeholder="Ej: Latitude 5540..." />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Tipo de Equipo</label>
+        <select class="field-select" [formControl]="form.controls.tipoEquipo">
+          <option value="" disabled>Seleccionar tipo de equipo...</option>
+          @for (tipo of typeOptions; track tipo) {
+            <option [value]="tipo">{{ tipo }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Descripción</label>
+        <textarea class="field-textarea" [formControl]="form.controls.descripcion" placeholder="Descripción del equipo, componentes o hallazgos..." rows="3"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Foto del Estado Inicial</label>
+        <div class="upload-area">
+          <lucide-icon [img]="icons.upload" [size]="24" color="#A3A3A3" />
+          <span class="upload-text">Arrastra una imagen o haz clic para subir</span>
+          <span class="upload-hint">PNG, JPG hasta 5MB</span>
+        </div>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="error-message">{{ errorMessage() }}</div>
+      }
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="onClose()">Cancelar</button>
+      <button class="btn-primary" [disabled]="isSubmitting()" (click)="onSubmit()">
+        <lucide-icon [img]="icons.plus" [size]="16" color="#FFFFFF" />
+        Registrar Equipo
+      </button>
+    </div>
+  </div>
+</div>

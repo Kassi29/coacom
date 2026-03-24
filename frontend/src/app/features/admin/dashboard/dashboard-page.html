@@ -1,0 +1,63 @@
+<div class="dashboard">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <h1 class="welcome-title">Bienvenido, {{ userName() }}</h1>
+    <p class="welcome-subtitle">Aqui tienes un resumen de la actividad del sistema</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-row">
+    @for (stat of stats; track stat.label) {
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">{{ stat.label }}</span>
+          <div class="stat-icon" [style.background]="stat.iconBg">
+            <lucide-icon [img]="stat.icon" [size]="20" [color]="stat.iconColor" />
+          </div>
+        </div>
+        <div class="stat-value">{{ stat.value }}</div>
+        <div class="stat-sub" [style.color]="stat.subColor">{{ stat.sub }}</div>
+      </div>
+    }
+  </div>
+
+  <!-- Bottom Section -->
+  <div class="bottom-section">
+    <!-- Activity Card -->
+    <div class="activity-card">
+      <div class="card-header">
+        <h3 class="card-title">Actividad Reciente</h3>
+        <a class="view-all-link" href="javascript:void(0)">Ver todo</a>
+      </div>
+      <div class="activity-list">
+        @for (item of activities; track item.text) {
+          <div class="activity-item">
+            <div class="activity-dot" [style.background]="item.dotColor"></div>
+            <div class="activity-content">
+              <span class="activity-text">{{ item.text }}</span>
+              <span class="activity-time">{{ item.time }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="actions-card">
+      <div class="card-header">
+        <h3 class="card-title">Acciones Rapidas</h3>
+      </div>
+      <div class="actions-list">
+        @for (action of quickActions; track action.label) {
+          <a class="action-btn" [href]="action.route">
+            <div class="action-icon-wrap">
+              <lucide-icon [img]="action.icon" [size]="20" color="#E10E1A" />
+            </div>
+            <span class="action-label">{{ action.label }}</span>
+            <lucide-icon [img]="icons.arrowRight" [size]="16" color="#A3A3A3" />
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+</div>

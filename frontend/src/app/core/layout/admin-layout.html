@@ -1,0 +1,34 @@
+<div class="admin-layout">
+  <app-sidebar />
+
+  <div class="main-wrapper">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <h1 class="top-bar-title">Panel de Administracion</h1>
+
+      <div class="top-bar-actions">
+        <div class="search-wrapper">
+          <lucide-icon class="search-icon" [img]="icons.search" [size]="16" color="#727272" />
+          <input
+            type="text"
+            [formControl]="searchControl"
+            placeholder="Buscar..."
+            class="search-input"
+          />
+        </div>
+
+        <button class="notification-btn">
+          <lucide-icon [img]="icons.bell" [size]="20" color="#727272" />
+          @if (notificationCount() > 0) {
+            <span class="notification-badge">{{ notificationCount() }}</span>
+          }
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

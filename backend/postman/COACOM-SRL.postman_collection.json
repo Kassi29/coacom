@@ -1,0 +1,528 @@
+{
+  "info": {
+    "name": "COACOM SRL - API",
+    "description": "Colección completa de endpoints del sistema COACOM SRL.\n\n**Flujo de uso:**\n1. Ejecuta `Login` para obtener el token\n2. El token se guarda automáticamente en la variable `{{token}}`\n3. Los demás endpoints usan el token automáticamente",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Módulo de autenticación",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('token', res.accessToken);",
+                  "    console.log('Token guardado exitosamente');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@coacom.bo\",\n  \"password\": \"tu-password-aqui\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Inicia sesión con email y contraseña.\n\n**Respuesta:** JWT token + datos del usuario.\n\nEl token se guarda automáticamente en la variable `{{token}}` para usarlo en los demás endpoints."
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "profile"]
+            },
+            "description": "Obtiene el perfil del usuario autenticado.\n\n**Requiere:** Token JWT (se envía automáticamente)."
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"password-actual\",\n  \"newPassword\": \"nuevo-password-seguro\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "change-password"]
+            },
+            "description": "Cambia la contraseña del usuario autenticado.\n\n**Requiere:** Token JWT\n\n**Nota:** Después de cambiar la contraseña, el flag `mustChangePassword` se pone en `false`."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "Módulo de gestión de usuarios (solo Admin)",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Página (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Registros por página (default: 10, max: 100)"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Buscar por nombre (firstName/lastName) o email",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "technician",
+                  "description": "Filtrar por rol: admin | general_manager | branch_manager | technician | client",
+                  "disabled": true
+                },
+                {
+                  "key": "branchId",
+                  "value": "",
+                  "description": "Filtrar por UUID de sucursal (branch)",
+                  "disabled": true
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "description": "Filtrar por estado: true | false",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lista usuarios con paginación y filtros.\n\n**Roles permitidos:** Admin\n\n**Filtros opcionales:**\n- `search` — busca en firstName, lastName y email\n- `role` — filtra por rol (admin, general_manager, branch_manager, technician, client)\n- `branchId` — filtra por sucursal (branch)\n- `isActive` — filtra por estado (true/false)"
+          }
+        },
+        {
+          "name": "List Users - Search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users?search=carlos&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "carlos"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Ejemplo: buscar usuarios por nombre 'carlos'."
+          }
+        },
+        {
+          "name": "List Users - By Role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users?role=technician&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "technician"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Ejemplo: listar solo técnicos (technician)."
+          }
+        },
+        {
+          "name": "List Users - Inactive",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users?isActive=false&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"],
+              "query": [
+                {
+                  "key": "isActive",
+                  "value": "false"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Ejemplo: listar solo usuarios inactivos."
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Asegúrate de tener un userId válido en las variables"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            },
+            "description": "Obtiene un usuario por su UUID.\n\n**Requiere:** `userId` en las variables de la colección."
+          }
+        },
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('userId', res.id);",
+                  "    console.log('userId guardado:', res.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"Mendoza\",\n  \"email\": \"cmendoza@coacom.bo\",\n  \"password\": \"Temporal123\",\n  \"role\": \"technician\",\n  \"branchId\": \"uuid-de-sucursal-aqui\",\n  \"specialty\": \"Hardware\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Crea un nuevo usuario con contraseña temporal.\n\n**Roles permitidos:** Admin\n\n**Campos:**\n- `firstName` (nombre, requerido, max 100)\n- `lastName` (apellido, requerido, max 100)\n- `email` (requerido, formato email)\n- `password` (requerido, min 6, max 72)\n- `role` (rol, requerido): admin | general_manager | branch_manager | technician | client\n- `branchId` (sucursal, opcional, UUID): requerido para branch_manager y technician\n- `specialty` (especialidad, opcional, max 100): solo para technician\n\n**Nota:** El usuario se crea con `mustChangePassword: true`. En su primer login deberá cambiar la contraseña.\n\nEl `userId` se guarda automáticamente en las variables."
+          }
+        },
+        {
+          "name": "Create Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('userId', res.id);",
+                  "    console.log('Admin userId guardado:', res.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Admin\",\n  \"lastName\": \"Principal\",\n  \"email\": \"admin@coacom.bo\",\n  \"password\": \"Admin2026!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/admin",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "admin"]
+            },
+            "description": "Crea un usuario administrador.\n\n**Roles permitidos:** Admin\n\n**Campos:** Solo firstName (nombre), lastName (apellido), email y password.\nNo requiere branchId (sucursal) ni specialty (especialidad).\n\nSe crea con `mustChangePassword: false` y `role: admin` automáticamente."
+          }
+        },
+        {
+          "name": "Create User - Branch Manager",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Laura\",\n  \"lastName\": \"Pérez\",\n  \"email\": \"lperez@coacom.bo\",\n  \"password\": \"Temporal123\",\n  \"role\": \"branch_manager\",\n  \"branchId\": \"uuid-de-sucursal-aqui\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Ejemplo: crear un Gerente de Sucursal (branch_manager, requiere branchId)."
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Carlos Alberto\",\n  \"specialty\": \"Redes\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            },
+            "description": "Actualiza parcialmente un usuario.\n\n**Roles permitidos:** Admin\n\nSolo enviar los campos que se quieren cambiar."
+          }
+        },
+        {
+          "name": "Deactivate User",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}/deactivate",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}", "deactivate"]
+            },
+            "description": "Desactiva un usuario (soft delete).\n\n**Roles permitidos:** Admin\n\nNo elimina el registro, solo pone `isActive = false`."
+          }
+        },
+        {
+          "name": "Activate User",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}/activate",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}", "activate"]
+            },
+            "description": "Reactiva un usuario desactivado.\n\n**Roles permitidos:** Admin"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Branches",
+      "description": "Módulo de gestión de sucursales (branches)",
+      "item": [
+        {
+          "name": "List Branches",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/branches",
+              "host": ["{{baseUrl}}"],
+              "path": ["branches"]
+            },
+            "description": "Lista todas las sucursales (branches) activas.\n\n**Roles permitidos:** Admin, General Manager"
+          }
+        },
+        {
+          "name": "Get Branch by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/branches/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["branches", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "uuid-de-sucursal-aqui",
+                  "description": "UUID de la sucursal (branch)"
+                }
+              ]
+            },
+            "description": "Obtiene una sucursal (branch) por su UUID."
+          }
+        },
+        {
+          "name": "Create Branch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nueva Sucursal\",\n  \"city\": \"Santa Cruz\",\n  \"address\": \"Av. Principal #123\",\n  \"phone\": \"33445566\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/branches",
+              "host": ["{{baseUrl}}"],
+              "path": ["branches"]
+            },
+            "description": "Crea una nueva sucursal (branch).\n\n**Roles permitidos:** Admin\n\n**Campos:**\n- `name` (nombre, requerido)\n- `city` (ciudad, requerido)\n- `address` (dirección, requerido)\n- `phone` (teléfono, opcional)"
+          }
+        },
+        {
+          "name": "Update Branch",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sucursal Actualizada\",\n  \"phone\": \"77889900\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/branches/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["branches", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "uuid-de-sucursal-aqui",
+                  "description": "UUID de la sucursal (branch)"
+                }
+              ]
+            },
+            "description": "Actualiza parcialmente una sucursal (branch).\n\n**Roles permitidos:** Admin\n\nSolo enviar los campos que se quieren cambiar."
+          }
+        },
+        {
+          "name": "Deactivate Branch",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/branches/:id/deactivate",
+              "host": ["{{baseUrl}}"],
+              "path": ["branches", ":id", "deactivate"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "uuid-de-sucursal-aqui",
+                  "description": "UUID de la sucursal (branch)"
+                }
+              ]
+            },
+            "description": "Desactiva una sucursal (branch). Soft delete.\n\n**Roles permitidos:** Admin"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,181 @@
+@if (isLoading()) {
+  <div class="loading">Cargando perfil de cliente...</div>
+} @else if (client(); as c) {
+  <div class="profile-page">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <button class="back-btn" (click)="goBack()">
+        <lucide-icon [img]="icons.arrowLeft" [size]="20" color="#171717" />
+      </button>
+      <h1 class="top-title">Perfil de Cliente</h1>
+    </div>
+
+    <!-- Client Info Card -->
+    <div class="info-card">
+      <div class="card-top">
+        <div class="left-section">
+          <div class="avatar-large" [style.background]="avatarColor()">{{ initials() }}</div>
+          <div class="name-block">
+            <h2 class="client-name">{{ c.nombreCompleto }}</h2>
+            <div class="badge-row">
+              @if (c.tipo === 'empresa') {
+                <span class="badge badge-empresa">{{ typeLabels[c.tipo] }}</span>
+              } @else {
+                <span class="badge badge-persona">{{ typeLabels[c.tipo] }}</span>
+              }
+              <span class="badge badge-code">{{ c.codigo }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="right-section">
+          <div class="info-col">
+            <div class="info-row">
+              <span class="info-label">NIT/CI</span>
+              <span class="info-value">{{ c.nit || c.ci || '-' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Teléfono</span>
+              <span class="info-value">{{ c.telefono || '-' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Sucursal</span>
+              <span class="info-value">{{ c.branch?.name || '-' }}</span>
+            </div>
+          </div>
+          <div class="info-col">
+            <div class="info-row">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{ c.email || '-' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Dirección</span>
+              <span class="info-value">{{ c.direccion || '-' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stats-row">
+        @for (stat of stats(); track stat.label) {
+          <div class="stat-item">
+            <span class="stat-value">{{ stat.value }}</span>
+            <span class="stat-label">{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Tabs + Content -->
+    <div class="tabs-section">
+      <div class="tabs-row">
+        <div class="tabs">
+          <button
+            class="tab"
+            [class.active]="activeTab() === 'equipos'"
+            (click)="setTab('equipos')"
+          >
+            Equipos Asociados
+          </button>
+          <button
+            class="tab"
+            [class.active]="activeTab() === 'historial'"
+            (click)="setTab('historial')"
+          >
+            Historial de Servicios
+          </button>
+          <button
+            class="tab"
+            [class.active]="activeTab() === 'contratos'"
+            (click)="setTab('contratos')"
+          >
+            Contratos SLA
+          </button>
+        </div>
+        @if (activeTab() === 'equipos') {
+          <button class="btn-primary" (click)="openEquipmentModal()">
+            <lucide-icon [img]="icons.plus" [size]="16" color="#FFFFFF" />
+            Añadir Equipo
+          </button>
+        }
+      </div>
+
+      <!-- Equipos Tab -->
+      @if (activeTab() === 'equipos') {
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="col-serie">Nro. Serie</th>
+                <th class="col-marca">Marca</th>
+                <th class="col-modelo">Modelo</th>
+                <th class="col-tipo">Tipo</th>
+                <th class="col-estado">Estado</th>
+                <th>Último Servicio</th>
+                <th class="col-actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (equipment().length === 0) {
+                <tr>
+                  <td colspan="7" class="empty-cell">No hay equipos registrados</td>
+                </tr>
+              } @else {
+                @for (item of equipment(); track item.id) {
+                  <tr>
+                    <td class="muted-cell">{{ item.numeroSerie }}</td>
+                    <td class="muted-cell">{{ item.marca }}</td>
+                    <td class="muted-cell">{{ item.modelo }}</td>
+                    <td>
+                      <span class="badge badge-tipo-equipo">{{ item.tipoEquipo }}</span>
+                    </td>
+                    <td>
+                      @if (item.isActive) {
+                        <span class="badge badge-status-active">Activo</span>
+                      } @else {
+                        <span class="badge badge-status-inactive">Inactivo</span>
+                      }
+                    </td>
+                    <td class="muted-cell">-</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="action-icon-btn" title="Ver ficha" (click)="goToEquipmentDetail(item)">
+                          <lucide-icon [img]="icons.eye" [size]="16" color="#727272" />
+                        </button>
+                        <button class="action-icon-btn" title="Editar">
+                          <lucide-icon [img]="icons.pencil" [size]="16" color="#727272" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- Historial Tab (Placeholder) -->
+      @if (activeTab() === 'historial') {
+        <div class="tab-placeholder">
+          Historial de servicios estará disponible cuando se implemente el Módulo 4.
+        </div>
+      }
+
+      <!-- Contratos Tab (Placeholder) -->
+      @if (activeTab() === 'contratos') {
+        <div class="tab-placeholder">
+          Contratos SLA estarán disponibles cuando se implemente el Módulo 3.
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- Equipment Register Modal -->
+@if (showEquipmentModal() && client()) {
+  <app-equipo-register-modal
+    [clienteId]="client()!.id"
+    [clienteLabel]="client()!.nombreCompleto + ' (' + client()!.codigo + ')'"
+    (close)="closeEquipmentModal()"
+    (created)="onEquipmentCreated()"
+  />
+}

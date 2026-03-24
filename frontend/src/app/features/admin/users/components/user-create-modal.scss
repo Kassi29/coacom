@@ -1,0 +1,214 @@
+// ===== MODAL OVERLAY =====
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #00000066;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  width: 560px;
+  max-height: 90vh;
+  background: #FFFFFF;
+  border-radius: 12px;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+// ===== HEADER =====
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+}
+
+.modal-title {
+  font-family: 'Verdana', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #171717;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: #F5F5F5;
+  }
+}
+
+.divider {
+  height: 1px;
+  background: #E5E5E5;
+}
+
+// Error alert
+.error-alert {
+  margin: 16px 28px 0 28px;
+  padding: 12px 16px;
+  background: #FEE2E2;
+  color: #DC2626;
+  border-radius: 8px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 13px;
+}
+
+// ===== BODY =====
+.modal-body {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+
+  .form-field {
+    flex: 1;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-family: 'Lexend', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #171717;
+  }
+
+  input, select {
+    height: 42px;
+    border: 1px solid #E5E5E5;
+    border-radius: 8px;
+    padding: 0 12px;
+    font-family: 'Lexend', sans-serif;
+    font-size: 13px;
+    color: #171717;
+    background: #FFFFFF;
+    outline: none;
+    width: 100%;
+
+    &::placeholder {
+      color: #A3A3A3;
+    }
+
+    &:focus {
+      border-color: #E10E1A;
+    }
+  }
+
+  select {
+    cursor: pointer;
+    appearance: auto;
+  }
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .field-icon {
+    position: absolute;
+    left: 12px;
+    pointer-events: none;
+  }
+
+  input {
+    padding-left: 36px;
+  }
+
+  .toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+  }
+
+  // When no left icon, reset padding
+  input:first-child {
+    padding-left: 12px;
+  }
+}
+
+.field-note {
+  font-family: 'Lexend', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #727272;
+}
+
+// ===== FOOTER =====
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 28px;
+}
+
+.btn-cancel {
+  height: 42px;
+  padding: 0 20px;
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
+  background: #FFFFFF;
+  font-family: 'Lexend', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #171717;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #F5F5F5;
+    border-color: #D4D4D4;
+  }
+}
+
+.btn-submit {
+  height: 42px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 8px;
+  background: #E10E1A;
+  font-family: 'Lexend', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: #AA1919;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}

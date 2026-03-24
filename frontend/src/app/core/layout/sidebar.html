@@ -1,0 +1,49 @@
+<aside class="sidebar">
+  <!-- Logo Area -->
+  <div class="sidebar-logo">
+    <div class="logo-icon">C</div>
+    <span class="logo-text">COACOM</span>
+  </div>
+
+  <!-- Admin Section -->
+  <div class="section-label">ADMINISTRACIÓN</div>
+  <nav class="sidebar-nav">
+    @for (item of adminItems; track item.route) {
+      <a
+        class="nav-item"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+      >
+        <lucide-icon [img]="item.icon" [size]="20" />
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <!-- Gestión Section -->
+  <div class="section-label">GESTIÓN</div>
+  <nav class="sidebar-nav">
+    @for (item of gestionItems; track item.route) {
+      <a
+        class="nav-item"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+      >
+        <lucide-icon [img]="item.icon" [size]="20" />
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <!-- User Profile -->
+  <div class="sidebar-user">
+    <div class="user-avatar">{{ userInitials() }}</div>
+    <div class="user-info">
+      <span class="user-name">{{ userName() }}</span>
+      <span class="user-role">{{ userRoleLabel() }}</span>
+    </div>
+    <button class="logout-btn" (click)="handleLogout()" title="Cerrar sesion">
+      <lucide-icon [img]="icons.logout" [size]="18" />
+    </button>
+  </div>
+</aside>

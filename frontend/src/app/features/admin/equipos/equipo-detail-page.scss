@@ -1,0 +1,368 @@
+.loading {
+  padding: 40px;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #727272;
+}
+
+.detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ===== TOP BAR =====
+.top-bar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E5E5E5;
+  margin: -24px -24px 0;
+  padding: 0 24px;
+}
+
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 6px;
+
+  &:hover { background: #F5F5F5; }
+}
+
+.top-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #171717;
+}
+
+.top-right {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-outline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #FFFFFF;
+  color: #171717;
+  border: 1px solid #E5E5E5;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover { background: #F5F5F5; }
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #E10E1A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover { background: #AA1919; }
+}
+
+// ===== BREADCRUMBS =====
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .crumb {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+
+    &.link {
+      color: #E10E1A;
+      cursor: pointer;
+      &:hover { text-decoration: underline; }
+    }
+
+    &.active {
+      color: #171717;
+      font-weight: 500;
+    }
+  }
+}
+
+// ===== EQUIPMENT CARD =====
+.equip-card {
+  display: flex;
+  gap: 24px;
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.equip-left {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+
+.equip-icon-wrap {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  background: #F5F5F5;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.equip-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.equip-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #171717;
+}
+
+.equip-serial {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #727272;
+}
+
+.equip-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.badge-brand {
+    background: #F5F5F5;
+    color: #171717;
+  }
+
+  &.badge-tipo {
+    background: #DBEAFE;
+    color: #2563EB;
+  }
+
+  &.badge-status-active {
+    background: #DCFCE7;
+    color: #16A34A;
+  }
+
+  &.badge-status-inactive {
+    background: #FEE2E2;
+    color: #DC2626;
+  }
+}
+
+.equip-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.equip-info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+}
+
+.equip-info-label {
+  color: #727272;
+}
+
+.equip-info-value {
+  color: #171717;
+  font-weight: 500;
+}
+
+// ===== TIMELINE =====
+.timeline-section {
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #E5E5E5;
+}
+
+.timeline-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #171717;
+}
+
+.timeline-count {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #727272;
+}
+
+.timeline-body {
+  padding: 24px;
+}
+
+.timeline-empty {
+  text-align: center;
+  padding: 40px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #727272;
+}
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-entry {
+  display: flex;
+  gap: 16px;
+}
+
+.timeline-dot-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.timeline-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+
+  &.dot-green { background: #16A34A; }
+  &.dot-yellow { background: #F59E0B; }
+  &.dot-blue { background: #2563EB; }
+  &.dot-red { background: #DC2626; }
+  &.dot-gray { background: #A3A3A3; }
+}
+
+.timeline-line {
+  width: 2px;
+  flex: 1;
+  background: #E5E5E5;
+  margin-top: 4px;
+}
+
+.timeline-entry:last-child .timeline-line {
+  display: none;
+}
+
+.timeline-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 24px;
+}
+
+.timeline-date {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #171717;
+}
+
+.timeline-entry-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #171717;
+}
+
+.timeline-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #727272;
+  margin: 0;
+}
+
+.timeline-status-badge {
+  display: inline-block;
+  width: fit-content;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 4px;
+
+  &.status-green {
+    background: #DCFCE7;
+    color: #16A34A;
+  }
+
+  &.status-yellow {
+    background: #FEF3C7;
+    color: #D97706;
+  }
+
+  &.status-blue {
+    background: #DBEAFE;
+    color: #2563EB;
+  }
+
+  &.status-red {
+    background: #FEE2E2;
+    color: #DC2626;
+  }
+
+  &.status-gray {
+    background: #F5F5F5;
+    color: #727272;
+  }
+}
