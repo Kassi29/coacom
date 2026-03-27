@@ -16,14 +16,19 @@
     <!-- Search -->
     <div class="filter-field search-field">
       <label class="filter-label">Buscar</label>
-      <div class="input-with-icon">
-        <lucide-icon class="field-icon" [img]="icons.search" [size]="16" color="#A3A3A3" />
-        <input
-          type="text"
-          [formControl]="searchControl"
-          placeholder="Buscar por nombre o email..."
-          (keyup.enter)="applyFilters()"
-        />
+      <div class="search-row">
+        <div class="input-with-icon">
+          <lucide-icon class="field-icon" [img]="icons.search" [size]="16" color="#A3A3A3" />
+          <input
+            type="text"
+            [formControl]="searchControl"
+            placeholder="Buscar por nombre o email..."
+            (keyup.enter)="applyFilters()"
+          />
+        </div>
+        <button class="btn-search" (click)="applyFilters()">
+          <lucide-icon [img]="icons.search" [size]="16" color="#FFFFFF" />
+        </button>
       </div>
     </div>
 
@@ -54,14 +59,21 @@
       <div class="status-toggle">
         <button
           class="toggle-btn"
-          [class.active]="activeFilter()"
+          [class.active]="activeFilter() === null"
+          (click)="setActiveFilter(null)"
+        >
+          Todos
+        </button>
+        <button
+          class="toggle-btn"
+          [class.active]="activeFilter() === true"
           (click)="setActiveFilter(true)"
         >
           Activo
         </button>
         <button
           class="toggle-btn"
-          [class.active]="!activeFilter()"
+          [class.active]="activeFilter() === false"
           (click)="setActiveFilter(false)"
         >
           Inactivo
@@ -192,6 +204,7 @@
     [user]="editingUser()!"
     [branches]="branches()"
     (close)="closeEditModal()"
-    (updated)="onUserUpdated()"
+    (updated)="onUserUpdated($event)"
+    (statusToggled)="onStatusToggled($event)"
   />
 }

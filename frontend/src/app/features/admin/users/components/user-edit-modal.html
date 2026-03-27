@@ -44,14 +44,29 @@
           </div>
         </div>
 
-        <!-- Email -->
+        <!-- Email (read-only) -->
         <div class="form-field">
           <label>Correo Electronico</label>
           <div class="input-with-icon">
             <lucide-icon class="field-icon" [img]="icons.mail" [size]="16" color="#A3A3A3" />
-            <input type="email" formControlName="email" placeholder="correo@coacom.com" />
+            <input type="email" [value]="user().email" disabled class="input-disabled" />
           </div>
         </div>
+
+        <!-- TODO: Enable when email sending is implemented -->
+        @if (showResetPasswordSection) {
+          <div class="reset-password-section">
+            <div class="reset-info">
+              <lucide-icon [img]="icons.keyRound" [size]="16" color="#727272" />
+              <span class="reset-text">Restablecer contraseña</span>
+            </div>
+            <p class="reset-desc">Se enviará un correo al usuario con instrucciones para restablecer su contraseña.</p>
+            <button type="button" class="btn-reset-password">
+              <lucide-icon [img]="icons.mail" [size]="14" color="#E10E1A" />
+              Enviar correo de restablecimiento
+            </button>
+          </div>
+        }
 
         <!-- Role -->
         <div class="form-field">
@@ -74,7 +89,6 @@
                 <option [value]="b.id">{{ b.name }}</option>
               }
             </select>
-            <span class="field-note">Solo requerido para Gerente Sucursal y Tecnico</span>
           </div>
         }
 
@@ -88,7 +102,6 @@
                 <option [value]="esp">{{ esp }}</option>
               }
             </select>
-            <span class="field-note">Solo visible para tecnicos</span>
           </div>
         }
       </div>

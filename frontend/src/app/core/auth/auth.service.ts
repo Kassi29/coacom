@@ -7,13 +7,14 @@ import { LoginRequest, LoginResponse, LoginUser, JwtPayload } from '@shared/mode
 
 const TOKEN_KEY = 'access_token';
 const USER_KEY = 'current_user';
+const REMEMBER_KEY = 'remember_me';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   readonly #api = inject(ApiService);
   readonly #router = inject(Router);
 
-  readonly #token = signal<string | null>(localStorage.getItem(TOKEN_KEY));
+  readonly #token = signal<string | null>(this.#loadToken());
   readonly currentUser = signal<LoginUser | null>(this.#loadUserFromStorage());
   readonly userRole = computed<UserRole | null>(() => this.currentUser()?.role ?? null);
   readonly isAuthenticated = computed<boolean>(() => {
@@ -23,11 +24,17 @@ export class AuthService {
   });
   readonly mustChangePassword = signal(false);
 
-  login = (credentials: LoginRequest): Observable<LoginResponse> => {
+  login = (credentials: LoginRequest, rememberMe = false): Observable<LoginResponse> => {
     return this.#api.post<LoginResponse>('/auth/login', credentials as unknown as Record<string, unknown>).pipe(
       tap((response) => {
-        localStorage.setItem(TOKEN_KEY, response.accessToken);
-        localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+        const storage = rememberMe ? localStorage : sessionStorage;
+        storage.setItem(TOKEN_KEY, response.accessToken);
+        storage.setItem(USER_KEY, JSON.stringify(response.user));
+        if (rememberMe) {
+          localStorage.setItem(REMEMBER_KEY, 'true');
+        } else {
+          localStorage.removeItem(REMEMBER_KEY);
+        }
         this.#token.set(response.accessToken);
         this.currentUser.set(response.user);
         this.mustChangePassword.set(response.mustChangePassword);
@@ -38,6 +45,9 @@ export class AuthService {
   logout = (): void => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(REMEMBER_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(USER_KEY);
     this.#token.set(null);
     this.currentUser.set(null);
     void this.#router.navigate(['/login']);
@@ -47,8 +57,12 @@ export class AuthService {
     return this.#token();
   };
 
+  #loadToken(): string | null {
+    return localStorage.getItem(TOKEN_KEY) ?? sessionStorage.getItem(TOKEN_KEY);
+  }
+
   #loadUserFromStorage(): LoginUser | null {
-    const raw = localStorage.getItem(USER_KEY);
+    const raw = localStorage.getItem(USER_KEY) ?? sessionStorage.getItem(USER_KEY);
     if (!raw) return null;
     try {
       return JSON.parse(raw) as LoginUser;

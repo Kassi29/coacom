@@ -1,0 +1,168 @@
+@if (isLoading()) {
+  <div class="loading-page">Cargando contrato...</div>
+} @else if (contract(); as c) {
+  <div class="detail-page">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-left">
+        <button class="back-btn" (click)="goBack()">
+          <lucide-icon [img]="icons.arrowLeft" [size]="20" color="#727272" />
+        </button>
+        <h1 class="top-title">Detalle de Contrato SLA</h1>
+      </div>
+      <div class="top-actions">
+        <button class="btn-outline" (click)="openEditModal()">
+          <lucide-icon [img]="icons.pencil" [size]="16" color="#E10E1A" />
+          Editar
+        </button>
+        <button class="btn-primary" (click)="exportPdf()">
+          <lucide-icon [img]="icons.fileDown" [size]="16" color="#FFFFFF" />
+          Exportar PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-row">
+      <span class="crumb">Contratos SLA</span>
+      <span class="crumb-sep">&gt;</span>
+      <span class="crumb active">{{ c.client.displayName }}</span>
+    </div>
+
+    <!-- Client Info Bar -->
+    <div class="client-info-bar">
+      <div class="client-left">
+        <div class="client-avatar" [style.background]="getAvatarColor()">
+          {{ getClientInitials() }}
+        </div>
+        <div class="client-details">
+          <div class="client-name-row">
+            <span class="client-display-name">{{ c.client.displayName }}</span>
+            @if (c.isActive) {
+              <span class="contract-badge active">Contrato Activo</span>
+            } @else {
+              <span class="contract-badge expired">Contrato Vencido</span>
+            }
+          </div>
+          <span class="client-meta">{{ c.client.code }} · NIT: {{ c.client.nit || '-' }}</span>
+        </div>
+      </div>
+      <div class="client-right">
+        <span class="date-info">Inicio: {{ formatDate(c.startDate) }}</span>
+        <span class="date-info">Vencimiento: {{ formatDate(c.endDate) }}</span>
+        <span class="date-info">Respuesta: {{ c.responseTimeHrs }}h máximo</span>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-value">{{ c.contractedHours }}h</span>
+        <span class="stat-label">Horas Contratadas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value stat-orange">{{ c.usedHours }}h</span>
+        <span class="stat-label">Horas Utilizadas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" [style.color]="balanceColor()">{{ c.availableBalance }}h</span>
+        <span class="stat-label">Saldo Disponible</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ daysRemaining() }}</span>
+        <span class="stat-label">Días Restantes</span>
+      </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="progress-section">
+      <h3 class="progress-title">Consumo de Horas</h3>
+      <div class="segmented-bar">
+        <div class="seg-used" [style.width.%]="usagePercent()"></div>
+        <div class="seg-reserved" [style.width.%]="reservedPercent()"></div>
+      </div>
+      <div class="progress-legend">
+        <span class="legend-item"><span class="legend-dot used"></span> Utilizado</span>
+        <span class="legend-item"><span class="legend-dot reserved"></span> Reservado</span>
+        <span class="legend-item"><span class="legend-dot available"></span> Disponible</span>
+        <span class="legend-percent">{{ usagePercent() }}% utilizado</span>
+      </div>
+    </div>
+
+    <!-- Two Columns -->
+    <div class="two-columns">
+      <!-- Left: Movements -->
+      <div class="card-section">
+        <div class="card-header">
+          <h3 class="card-title">Historial de Movimientos</h3>
+          <span class="card-count">{{ c.movements.length }} movimientos</span>
+        </div>
+        <div class="movements-list">
+          @if (c.movements.length === 0) {
+            <div class="empty-movements">Sin movimientos registrados</div>
+          } @else {
+            @for (mov of c.movements; track mov.id) {
+              <div class="movement-item">
+                <div class="movement-left">
+                  <lucide-icon
+                    [img]="getMovementIcon(mov)"
+                    [size]="20"
+                    [color]="getMovementColor(mov)"
+                  />
+                  <div class="movement-info">
+                    <span class="movement-title">
+                      {{ mov.type === 'deduction' ? 'Descuento' : 'Reversa' }}
+                      @if (mov.serviceId) {
+                        — {{ mov.serviceId }}
+                      }
+                    </span>
+                    <span class="movement-sub">{{ mov.reason }} · {{ formatMovementDate(mov.createdAt) }}</span>
+                  </div>
+                </div>
+                <span class="movement-hours" [style.color]="getMovementColor(mov)">
+                  {{ getMovementSign(mov) }}
+                </span>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Right: Alerts -->
+      <div class="card-section">
+        <div class="card-header">
+          <h3 class="card-title">Alertas del Contrato</h3>
+        </div>
+        <div class="alerts-list">
+          @if (alerts().length === 0) {
+            <div class="empty-movements">Sin alertas activas</div>
+          } @else {
+            @for (alert of alerts(); track alert.title) {
+              <div class="alert-card" [style.border-left-color]="getAlertColor(alert.type)">
+                <div class="alert-header">
+                  <lucide-icon
+                    [img]="getAlertIcon(alert.type)"
+                    [size]="16"
+                    [color]="getAlertColor(alert.type)"
+                  />
+                  <span class="alert-title" [style.color]="getAlertColor(alert.type)">{{ alert.title }}</span>
+                </div>
+                <p class="alert-message">{{ alert.message }}</p>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Modal -->
+    @if (showEditModal()) {
+      <app-sla-contract-edit-modal
+        [contract]="c"
+        (close)="closeEditModal()"
+        (updated)="onContractUpdated($event)"
+        (deactivated)="onContractDeactivated()"
+      />
+    }
+  </div>
+}

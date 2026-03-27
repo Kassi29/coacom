@@ -38,6 +38,7 @@ export class LoginPage {
   protected readonly showPassword = signal(false);
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal('');
+  protected readonly showForgotModal = signal(false);
 
   protected togglePassword = (): void => {
     this.showPassword.update((v) => !v);
@@ -58,7 +59,7 @@ export class LoginPage {
 
     const { email, password } = this.form.getRawValue();
 
-    this.#authService.login({ email, password }).subscribe({
+    this.#authService.login({ email, password }, this.rememberMe()).subscribe({
       next: () => {
         this.isLoading.set(false);
         const role = this.#authService.userRole();

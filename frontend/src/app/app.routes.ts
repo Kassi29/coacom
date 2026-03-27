@@ -46,6 +46,21 @@ export const routes: Routes = [
           import('@features/admin/clientes/cliente-profile-page').then((m) => m.ClienteProfilePage),
       },
       {
+        path: 'contratos',
+        loadComponent: () =>
+          import('@features/admin/sla-contracts/sla-contracts-page').then((m) => m.SlaContractsPage),
+      },
+      {
+        path: 'contratos/nuevo',
+        loadComponent: () =>
+          import('@features/admin/sla-contracts/sla-contract-create-page').then((m) => m.SlaContractCreatePage),
+      },
+      {
+        path: 'contratos/:id',
+        loadComponent: () =>
+          import('@features/admin/sla-contracts/sla-contract-detail-page').then((m) => m.SlaContractDetailPage),
+      },
+      {
         path: 'equipos/:id',
         loadComponent: () =>
           import('@features/admin/equipos/equipo-detail-page').then((m) => m.EquipoDetailPage),

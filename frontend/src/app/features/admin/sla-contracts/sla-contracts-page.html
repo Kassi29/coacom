@@ -1,0 +1,171 @@
+<div class="contracts-page">
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">Contratos de Mantenimiento SLA</h1>
+    <button class="btn-primary" (click)="goToNew()">
+      <lucide-icon [img]="icons.plus" [size]="16" color="#FFFFFF" />
+      Nuevo Contrato
+    </button>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-field search-field">
+      <label class="filter-label">Buscar</label>
+      <div class="input-with-icon">
+        <lucide-icon class="field-icon" [img]="icons.search" [size]="16" color="#A3A3A3" />
+        <input
+          type="text"
+          [formControl]="searchControl"
+          placeholder="Buscar por cliente..."
+        />
+      </div>
+    </div>
+
+    <div class="filter-field" style="width: 180px;">
+      <label class="filter-label">Estado</label>
+      <select [formControl]="statusControl" (change)="applyFilters()">
+        <option value="active">Activos</option>
+        <option value="all">Todos</option>
+      </select>
+    </div>
+
+    <div class="filter-field" style="width: 180px;">
+      <label class="filter-label">Sucursal</label>
+      <select [formControl]="branchControl" (change)="applyFilters()">
+        <option value="">Todas</option>
+        @for (b of branches(); track b.id) {
+          <option [value]="b.id">{{ b.name }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-value stat-green">{{ activeCount() }}</span>
+      <span class="stat-label">Contratos Activos</span>
+      <span class="stat-sub">Activos</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value stat-orange">{{ expiringCount() }}</span>
+      <span class="stat-label">Por Vencer (30 días)</span>
+      <span class="stat-sub">Expira</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value stat-blue">{{ avgAvailableHours() }}h</span>
+      <span class="stat-label">Promedio Horas Disponibles</span>
+      <span class="stat-sub">Disponibles</span>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th class="col-date">Fecha Inicio</th>
+          <th class="col-date">Fecha Fin</th>
+          <th class="col-hours">Hrs. Contr.</th>
+          <th class="col-usage">Horas Utilizadas</th>
+          <th class="col-balance">Saldo</th>
+          <th class="col-status">Estado</th>
+          <th class="col-actions">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="8" class="loading-cell">Cargando contratos...</td>
+          </tr>
+        } @else if (contracts().length === 0) {
+          <tr>
+            <td colspan="8" class="empty-cell">No se encontraron contratos</td>
+          </tr>
+        } @else {
+          @for (contract of contracts(); track contract.id) {
+            <tr class="clickable-row" (click)="goToDetail(contract)">
+              <td>
+                <div class="client-cell">
+                  <div class="client-avatar" [style.background]="getAvatarColor(contract)">
+                    {{ getClientInitials(contract) }}
+                  </div>
+                  <span class="client-name">{{ contract.client.displayName }}</span>
+                </div>
+              </td>
+              <td class="muted-cell">{{ formatDate(contract.startDate) }}</td>
+              <td class="muted-cell">{{ formatDate(contract.endDate) }}</td>
+              <td class="center-cell">{{ contract.contractedHours }}</td>
+              <td>
+                <div class="usage-cell">
+                  <div class="progress-bar">
+                    <div
+                      class="progress-fill"
+                      [style.width.%]="getUsagePercent(contract)"
+                      [style.background]="getProgressColor(contract)"
+                    ></div>
+                  </div>
+                  <span class="usage-text" [style.color]="getProgressColor(contract)">
+                    {{ getUsagePercent(contract) }}%
+                  </span>
+                </div>
+              </td>
+              <td class="center-cell">{{ contract.availableBalance }}h</td>
+              <td>
+                @if (contract.isActive) {
+                  <span class="status-badge active">Activo</span>
+                } @else {
+                  <span class="status-badge expired">Vencido</span>
+                }
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <button class="action-icon-btn" title="Ver detalle" (click)="goToDetail(contract); $event.stopPropagation()">
+                    <lucide-icon [img]="icons.eye" [size]="16" color="#727272" />
+                  </button>
+                  <button class="action-icon-btn" title="Editar" (click)="goToDetail(contract); $event.stopPropagation()">
+                    <lucide-icon [img]="icons.pencil" [size]="16" color="#727272" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    @if (totalPages() > 0 && !isLoading()) {
+      <div class="pagination-bar">
+        <span class="pagination-info">{{ paginationText() }}</span>
+        <div class="pagination-buttons">
+          <button
+            class="page-btn"
+            [disabled]="currentPage() === 1"
+            (click)="goToPage(currentPage() - 1)"
+          >
+            <lucide-icon [img]="icons.chevronLeft" [size]="16" />
+          </button>
+          @for (page of pages(); track page) {
+            <button
+              class="page-btn"
+              [class.active]="page === currentPage()"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          }
+          <button
+            class="page-btn"
+            [disabled]="currentPage() === totalPages()"
+            (click)="goToPage(currentPage() + 1)"
+          >
+            <lucide-icon [img]="icons.chevronRight" [size]="16" />
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

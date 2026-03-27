@@ -10,6 +10,7 @@ import { BranchesModule } from './modules/branches/branches.module';
 import { ClientesModule } from './modules/clientes/clientes.module';
 import { EquiposModule } from './modules/equipos/equipos.module';
 import { SearchModule } from './modules/search/search.module';
+import { SlaContractsModule } from './modules/sla-contracts/sla-contracts.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SearchModule } from './modules/search/search.module';
     ClientesModule,
     EquiposModule,
     SearchModule,
+    SlaContractsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

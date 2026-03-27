@@ -98,7 +98,7 @@
         </button>
 
         <!-- Forgot Password -->
-        <a class="forgot-link" href="javascript:void(0)">Olvide mi contrasena</a>
+        <button type="button" class="forgot-link" (click)="showForgotModal.set(true)">Olvide mi contrasena</button>
       </form>
     </div>
 
@@ -107,3 +107,26 @@
     </footer>
   </div>
 </div>
+
+<!-- Forgot Password Modal -->
+@if (showForgotModal()) {
+  <div class="modal-overlay" (click)="showForgotModal.set(false)">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-icon">
+        <lucide-icon [img]="icons.lock" [size]="32" color="#E10E1A" />
+      </div>
+      <h3 class="modal-title">Restablecer Contraseña</h3>
+      <p class="modal-text">
+        Para restablecer su contraseña, contacte al administrador del sistema.
+        El administrador generará una nueva contraseña temporal para su cuenta.
+      </p>
+      <div class="modal-contact">
+        <div class="contact-row">
+          <lucide-icon [img]="icons.mail" [size]="16" color="#727272" />
+          <span>admin&#64;coacom.bo</span>
+        </div>
+      </div>
+      <button class="modal-btn" (click)="showForgotModal.set(false)">Entendido</button>
+    </div>
+  </div>
+}

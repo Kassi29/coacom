@@ -303,15 +303,102 @@
 // Forgot link
 .forgot-link {
   display: block;
+  width: 100%;
   text-align: center;
   font-family: 'Lexend', sans-serif;
   font-size: 13px;
   color: #E10E1A;
   cursor: pointer;
   margin-top: 4px;
+  background: none;
+  border: none;
 
   &:hover {
     text-decoration: underline;
+  }
+}
+
+// Forgot Password Modal
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 32px;
+  width: 400px;
+  max-width: 90vw;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.modal-icon {
+  width: 64px;
+  height: 64px;
+  background: #FEE2E2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.modal-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #171717;
+  margin-bottom: 12px;
+}
+
+.modal-text {
+  font-family: 'Lexend', sans-serif;
+  font-size: 14px;
+  color: #727272;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.modal-contact {
+  background: #F5F5F5;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 14px;
+  color: #171717;
+  font-weight: 500;
+}
+
+.modal-btn {
+  width: 100%;
+  height: 44px;
+  background: #E10E1A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #AA1919;
   }
 }
 

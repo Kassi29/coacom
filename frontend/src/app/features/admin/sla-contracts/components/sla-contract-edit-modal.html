@@ -1,0 +1,112 @@
+<div class="modal-overlay" (click)="onOverlayClick($event)">
+  <div class="modal-card">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Editar Contrato SLA</h2>
+      <button class="close-btn" (click)="handleClose()">
+        <lucide-icon [img]="icons.x" [size]="18" color="#727272" />
+      </button>
+    </div>
+
+    <!-- Client Info Bar -->
+    <div class="client-info-bar">
+      <div class="info-left">
+        <div class="info-avatar" [style.background]="getAvatarColor()">{{ getClientInitials() }}</div>
+        <div class="info-details">
+          <span class="info-name">{{ contract().client.displayName }}</span>
+          <span class="info-meta">{{ contract().client.code }}</span>
+        </div>
+      </div>
+      @if (contract().isActive) {
+        <span class="info-status active">Contrato Activo</span>
+      } @else {
+        <span class="info-status expired">Contrato Vencido</span>
+      }
+    </div>
+
+    <div class="divider"></div>
+
+    @if (errorMessage()) {
+      <div class="error-alert">{{ errorMessage() }}</div>
+    }
+
+    <!-- Form Body -->
+    <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+      <div class="modal-body">
+        <!-- Dates Row -->
+        <div class="form-row">
+          <div class="form-field">
+            <label>Fecha Inicio</label>
+            <input type="date" formControlName="startDate" />
+          </div>
+          <div class="form-field">
+            <label>Fecha Fin</label>
+            <input type="date" formControlName="endDate" />
+          </div>
+        </div>
+
+        <!-- Hours Row -->
+        <div class="form-row">
+          <div class="form-field">
+            <label>Horas Contratadas</label>
+            <input type="number" formControlName="contractedHours" min="1" />
+          </div>
+          <div class="form-field">
+            <label>Tiempo Respuesta (hrs)</label>
+            <input type="number" formControlName="responseTimeHrs" min="1" />
+          </div>
+        </div>
+
+        <!-- Services -->
+        <div class="form-field">
+          <label>Servicios Incluidos</label>
+          <div class="services-badges">
+            @for (svc of serviceOptions; track svc.value) {
+              <button
+                type="button"
+                class="service-badge"
+                [class.selected]="isServiceSelected(svc.value)"
+                [style.--svc-bg]="getServiceColor(svc.value).bg"
+                [style.--svc-text]="getServiceColor(svc.value).text"
+                (click)="toggleService(svc.value)"
+              >
+                {{ svc.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Alert Threshold -->
+        <div class="form-field">
+          <label>Umbral de Alerta</label>
+          <div class="slider-row">
+            <input
+              type="range"
+              class="threshold-slider"
+              formControlName="alertThreshold"
+              min="0"
+              max="100"
+              step="5"
+            />
+            <span class="slider-value">{{ form.controls.alertThreshold.value }}%</span>
+          </div>
+        </div>
+
+        <p class="field-note">Aumentar hrs. Contr. sólo genera una alerta</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn-deactivate" (click)="handleDeactivate()">
+          Desactivar Contrato
+        </button>
+        <div class="footer-right">
+          <button type="button" class="btn-cancel" (click)="handleClose()">Cancelar</button>
+          <button type="submit" class="btn-submit">Guardar Cambios</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

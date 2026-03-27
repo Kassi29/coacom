@@ -10,7 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-angular';
-import { UsersService, UsersQueryParams } from '@shared/services/users.service';
+import { UsersService, UsersQueryParams, UpdateUserPayload } from '@shared/services/users.service';
 import { BranchesService } from '@shared/services/branches.service';
 import { User, UserRole, USER_ROLE_LABELS, USER_ROLE_COLORS } from '@shared/models/user.model';
 import { Branch } from '@shared/models/branch.model';
@@ -54,7 +54,7 @@ export class UsersPage implements OnInit {
   protected readonly searchControl = new FormControl('', { nonNullable: true });
   protected readonly roleControl = new FormControl('', { nonNullable: true });
   protected readonly branchControl = new FormControl('', { nonNullable: true });
-  protected readonly activeFilter = signal<boolean>(true);
+  protected readonly activeFilter = signal<boolean | null>(null);
 
   // Data
   protected readonly users = signal<User[]>([]);
@@ -75,6 +75,7 @@ export class UsersPage implements OnInit {
 
   protected readonly paginationText = computed(() => {
     const total = this.totalUsers();
+    if (total === 0) return '0 usuarios encontrados';
     const page = this.currentPage();
     const size = this.pageSize();
     const start = (page - 1) * size + 1;
@@ -112,8 +113,8 @@ export class UsersPage implements OnInit {
     return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
   };
 
-  protected setActiveFilter = (active: boolean): void => {
-    this.activeFilter.set(active);
+  protected setActiveFilter = (value: boolean | null): void => {
+    this.activeFilter.set(value);
     this.currentPage.set(1);
     this.loadUsers();
   };
@@ -153,14 +154,58 @@ export class UsersPage implements OnInit {
     this.loadUsers();
   };
 
-  protected onUserUpdated = (): void => {
+  protected onUserUpdated = (payload: UpdateUserPayload): void => {
+    const userId = this.editingUser()?.id;
+    if (!userId) return;
+
+    // Optimistic: apply changes to the local list immediately
+    const snapshot = [...this.users()];
+    this.users.update((list) =>
+      list.map((u) => u.id === userId ? { ...u, ...payload } as User : u),
+    );
     this.closeEditModal();
-    this.loadUsers();
+
+    // Sync with backend — rollback on error
+    this.#usersService.update(userId, payload).subscribe({
+      error: () => {
+        this.users.set(snapshot);
+        this.loadUsers();
+      },
+    });
+  };
+
+  protected onStatusToggled = (newStatus: boolean): void => {
+    const userId = this.editingUser()?.id;
+    if (!userId) return;
+
+    const snapshot = [...this.users()];
+    this.users.update((list) =>
+      list.map((u) => u.id === userId ? { ...u, isActive: newStatus } : u),
+    );
+    this.closeEditModal();
+
+    this.#usersService.toggleStatus(userId, newStatus).subscribe({
+      error: () => {
+        this.users.set(snapshot);
+        this.loadUsers();
+      },
+    });
   };
 
   protected toggleUserStatus = (user: User): void => {
-    this.#usersService.toggleStatus(user.id, !user.isActive).subscribe({
-      next: () => this.loadUsers(),
+    const newStatus = !user.isActive;
+
+    // Optimistic: toggle in the local list immediately
+    const snapshot = [...this.users()];
+    this.users.update((list) =>
+      list.map((u) => u.id === user.id ? { ...u, isActive: newStatus } : u),
+    );
+
+    this.#usersService.toggleStatus(user.id, newStatus).subscribe({
+      error: () => {
+        this.users.set(snapshot);
+        this.loadUsers();
+      },
     });
   };
 
@@ -169,7 +214,7 @@ export class UsersPage implements OnInit {
     const params: UsersQueryParams = {
       page: this.currentPage(),
       limit: this.pageSize(),
-      isActive: this.activeFilter(),
+      ...(this.activeFilter() !== null ? { isActive: this.activeFilter() as boolean } : {}),
     };
 
     const search = this.searchControl.value.trim();

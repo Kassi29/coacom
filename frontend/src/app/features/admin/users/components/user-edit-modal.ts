@@ -1,10 +1,10 @@
 import { Component, inject, input, output, signal, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { LucideAngularModule, X, Mail, UserX } from 'lucide-angular';
+import { LucideAngularModule, X, Mail, UserX, KeyRound } from 'lucide-angular';
 import { UsersService, UpdateUserPayload } from '@shared/services/users.service';
 import { User, UserRole } from '@shared/models/user.model';
 import { Branch } from '@shared/models/branch.model';
-import { ApiError } from '@shared/models/api-response.model';
+// ApiError no longer needed — parent handles backend errors
 
 @Component({
   selector: 'app-user-edit-modal',
@@ -18,14 +18,17 @@ export class UserEditModal implements OnInit {
   readonly user = input.required<User>();
   readonly branches = input.required<Branch[]>();
   readonly close = output<void>();
-  readonly updated = output<void>();
+  readonly updated = output<UpdateUserPayload>();
+  readonly statusToggled = output<boolean>();
 
-  protected readonly icons = { x: X, mail: Mail, userX: UserX };
+  protected readonly icons = { x: X, mail: Mail, userX: UserX, keyRound: KeyRound };
+
+  // TODO: Enable when email sending is implemented
+  protected readonly showResetPasswordSection = false;
 
   protected readonly form = new FormGroup({
     firstName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     lastName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     role: new FormControl<UserRole | ''>('', { nonNullable: true, validators: [Validators.required] }),
     branchId: new FormControl('', { nonNullable: true }),
     specialty: new FormControl('', { nonNullable: true }),
@@ -43,13 +46,11 @@ export class UserEditModal implements OnInit {
     { value: 'client', label: 'Cliente' },
   ];
 
+  // TODO: Fetch from backend when specialty management is implemented
   protected readonly specialtyOptions = [
-    'Electricidad',
-    'Plomeria',
-    'Aire Acondicionado',
-    'Refrigeracion',
-    'Electronica',
-    'General',
+    'Hardware',
+    'Software',
+    'Ingenieros Especialista'
   ];
 
   ngOnInit(): void {
@@ -57,7 +58,6 @@ export class UserEditModal implements OnInit {
     this.form.patchValue({
       firstName: u.firstName,
       lastName: u.lastName,
-      email: u.email,
       role: u.role,
       branchId: u.branchId ?? '',
       specialty: u.specialty ?? '',
@@ -99,15 +99,11 @@ export class UserEditModal implements OnInit {
       return;
     }
 
-    this.isLoading.set(true);
-    this.errorMessage.set('');
-
     const values = this.form.getRawValue();
     const payload: UpdateUserPayload = {
       firstName: values.firstName,
       lastName: values.lastName,
-      email: values.email,
-      role: values.role,
+      role: values.role as UserRole,
     };
 
     if (this.showBranch() && values.branchId) {
@@ -118,31 +114,13 @@ export class UserEditModal implements OnInit {
       payload.specialty = values.specialty;
     }
 
-    this.#usersService.update(this.user().id, payload).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.updated.emit();
-      },
-      error: (err: ApiError) => {
-        this.errorMessage.set(err.message || 'Error al actualizar usuario');
-        this.isLoading.set(false);
-      },
-    });
+    // Optimistic: emit payload, parent applies changes and handles backend call
+    this.updated.emit(payload);
   };
 
   protected handleDeactivate = (): void => {
-    this.isLoading.set(true);
-    const u = this.user();
-    this.#usersService.toggleStatus(u.id, !u.isActive).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.updated.emit();
-      },
-      error: (err: ApiError) => {
-        this.errorMessage.set(err.message || 'Error al cambiar estado');
-        this.isLoading.set(false);
-      },
-    });
+    // Optimistic: emit new status, parent handles backend + rollback
+    this.statusToggled.emit(!this.user().isActive);
   };
 
   protected handleClose = (): void => {
