@@ -9,6 +9,7 @@ import {
   UserCheck,
   ChevronLeft,
   ChevronRight,
+  KeyRound,
 } from 'lucide-angular';
 import { UsersService, UsersQueryParams, UpdateUserPayload } from '@shared/services/users.service';
 import { BranchesService } from '@shared/services/branches.service';
@@ -16,12 +17,13 @@ import { User, UserRole, USER_ROLE_LABELS, USER_ROLE_COLORS } from '@shared/mode
 import { Branch } from '@shared/models/branch.model';
 import { UserCreateModal } from './components/user-create-modal';
 import { UserEditModal } from './components/user-edit-modal';
+import { UserResetPasswordModal } from './components/user-reset-password-modal';
 
 const AVATAR_COLORS = ['#E10E1A', '#3B82F6', '#F59E0B', '#16A34A', '#8B5CF6', '#EC4899'];
 
 @Component({
   selector: 'app-users-page',
-  imports: [ReactiveFormsModule, LucideAngularModule, UserCreateModal, UserEditModal],
+  imports: [ReactiveFormsModule, LucideAngularModule, UserCreateModal, UserEditModal, UserResetPasswordModal],
   templateUrl: './users-page.html',
   styleUrl: './users-page.scss',
 })
@@ -37,6 +39,7 @@ export class UsersPage implements OnInit {
     userCheck: UserCheck,
     chevronLeft: ChevronLeft,
     chevronRight: ChevronRight,
+    keyRound: KeyRound,
   };
 
   protected readonly roleLabels = USER_ROLE_LABELS;
@@ -67,7 +70,9 @@ export class UsersPage implements OnInit {
   // Modals
   protected readonly showCreateModal = signal(false);
   protected readonly showEditModal = signal(false);
+  protected readonly showResetModal = signal(false);
   protected readonly editingUser = signal<User | null>(null);
+  protected readonly resettingUser = signal<User | null>(null);
 
   protected readonly totalPages = computed(() =>
     Math.ceil(this.totalUsers() / this.pageSize()) || 1
@@ -149,6 +154,20 @@ export class UsersPage implements OnInit {
     this.editingUser.set(null);
   };
 
+  protected openResetModal = (user: User): void => {
+    this.resettingUser.set(user);
+    this.showResetModal.set(true);
+  };
+
+  protected closeResetModal = (): void => {
+    this.showResetModal.set(false);
+    this.resettingUser.set(null);
+  };
+
+  protected onPasswordReset = (): void => {
+    this.closeResetModal();
+  };
+
   protected onUserCreated = (): void => {
     this.closeCreateModal();
     this.loadUsers();
@@ -158,19 +177,18 @@ export class UsersPage implements OnInit {
     const userId = this.editingUser()?.id;
     if (!userId) return;
 
-    // Optimistic: apply changes to the local list immediately
-    const snapshot = [...this.users()];
+    // Optimistic: close modal immediately, resolve branch for local update
+    const branch = payload.branchId
+      ? this.branches().find((b) => b.id === payload.branchId) ?? null
+      : null;
     this.users.update((list) =>
-      list.map((u) => u.id === userId ? { ...u, ...payload } as User : u),
+      list.map((u) => u.id === userId ? { ...u, ...payload, branch } as User : u),
     );
     this.closeEditModal();
 
-    // Sync with backend — rollback on error
+    // Sync with backend — reload on error to get fresh data
     this.#usersService.update(userId, payload).subscribe({
-      error: () => {
-        this.users.set(snapshot);
-        this.loadUsers();
-      },
+      error: () => this.loadUsers(),
     });
   };
 
@@ -178,17 +196,13 @@ export class UsersPage implements OnInit {
     const userId = this.editingUser()?.id;
     if (!userId) return;
 
-    const snapshot = [...this.users()];
     this.users.update((list) =>
       list.map((u) => u.id === userId ? { ...u, isActive: newStatus } : u),
     );
     this.closeEditModal();
 
     this.#usersService.toggleStatus(userId, newStatus).subscribe({
-      error: () => {
-        this.users.set(snapshot);
-        this.loadUsers();
-      },
+      error: () => this.loadUsers(),
     });
   };
 

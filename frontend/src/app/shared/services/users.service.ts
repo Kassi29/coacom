@@ -57,4 +57,8 @@ export class UsersService {
   toggleStatus = (id: string, isActive: boolean): Observable<User> => {
     return this.#api.patch<User>(`/users/${id}`, { isActive } as Record<string, unknown>);
   };
+
+  resetPassword = (id: string, newPassword: string): Observable<{ message: string }> => {
+    return this.#api.post<{ message: string }>(`/users/${id}/reset-password`, { newPassword });
+  };
 }

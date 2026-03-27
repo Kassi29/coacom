@@ -296,6 +296,28 @@ export class UsersService {
     console.log(`[AUDIT] Password changed flag cleared for user: ${id}`);
   }
 
+  async resetPassword(id: string, newPassword: string): Promise<{ message: string }> {
+    const user = await this.findById(id);
+
+    const { error } = await this.supabase.auth.admin.updateUserById(user.authId, {
+      password: newPassword,
+    });
+
+    if (error) {
+      throw new BadRequestException(
+        `Error al resetear contraseña: ${error.message}`,
+      );
+    }
+
+    await this.usersRepository.update(id, { mustChangePassword: true });
+
+    console.log(
+      `[AUDIT] Password reset by admin for user: ${user.id} (${user.email}), mustChangePassword set to true`,
+    );
+
+    return { message: 'Contraseña reseteada exitosamente' };
+  }
+
   /**
    * Validates that roles requiring a branch have one assigned.
    * BRANCH_MANAGER and TECHNICIAN must have a branchId.

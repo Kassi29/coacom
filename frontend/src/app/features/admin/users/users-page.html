@@ -138,6 +138,9 @@
                   <button class="action-icon-btn" title="Editar" (click)="openEditModal(user)">
                     <lucide-icon [img]="icons.pencil" [size]="16" color="#727272" />
                   </button>
+                  <button class="action-icon-btn warning" title="Resetear contraseña" (click)="openResetModal(user)">
+                    <lucide-icon [img]="icons.keyRound" [size]="16" color="#F59E0B" />
+                  </button>
                   @if (user.isActive) {
                     <button class="action-icon-btn danger" title="Desactivar" (click)="toggleUserStatus(user)">
                       <lucide-icon [img]="icons.userX" [size]="16" color="#DC2626" />
@@ -206,5 +209,14 @@
     (close)="closeEditModal()"
     (updated)="onUserUpdated($event)"
     (statusToggled)="onStatusToggled($event)"
+  />
+}
+
+<!-- Reset Password Modal -->
+@if (showResetModal() && resettingUser()) {
+  <app-user-reset-password-modal
+    [user]="resettingUser()!"
+    (close)="closeResetModal()"
+    (reset)="onPasswordReset()"
   />
 }

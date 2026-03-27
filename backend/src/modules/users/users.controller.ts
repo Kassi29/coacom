@@ -19,6 +19,7 @@ import { UserRole } from '../../common/enums/user-role.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { QueryUsersDto } from './dto/query-users.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { PaginatedResponse } from '../../common/interfaces/paginated-response.interface';
@@ -80,5 +81,15 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<UserResponseDto> {
     return this.usersService.activate(id);
+  }
+
+  @Post(':id/reset-password')
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ResetPasswordDto,
+  ): Promise<{ message: string }> {
+    return this.usersService.resetPassword(id, dto.newPassword);
   }
 }
